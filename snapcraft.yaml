@@ -1,0 +1,90 @@
+name: graphics-core20-samples
+adopt-info: samples
+grade: stable
+summary: sample apps to check and test graphics-core20
+description: sample apps to check and test graphics-core20 plug
+confinement: strict
+base: core20
+
+architectures:
+  - build-on: amd64
+
+environment:
+  LD_LIBRARY_PATH:    $SNAP/graphics/lib
+  LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
+  LIBVA_DRIVERS_PATH: $SNAP/graphics/dri
+  __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
+  XDG_CACHE_HOME:  $SNAP_USER_COMMON/.cache
+  XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
+
+layout:
+  /usr/share/libdrm:  # Needed by mesa-core20 on AMD GPUs
+    bind: $SNAP/graphics/libdrm
+  /usr/share/drirc.d:  # Used by mesa-core20 for app specific workarounds
+    bind: $SNAP/graphics/drirc.d
+
+plugs:
+  wayland:
+  opengl:
+  graphics-core20:
+    interface: content
+    target: $SNAP/graphics
+    default-provider: nvidia-core20/edge
+
+apps:
+  bandwidthTest:
+    command: usr/bin/bandwidthTest
+
+  deviceQuery:
+    command: usr/bin/deviceQuery
+
+  glxinfo:
+    command: usr/bin/glxinfo
+
+  eglinfo:
+    command: usr/bin/eglinfo
+
+  es2info:
+    command: usr/bin/es2_info
+
+parts:
+  samples:
+    source: https://github.com/NVIDIA/cuda-samples
+    source-tag: v10.1
+    source-type: git
+    source-depth: 1
+    plugin: nil
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version "$(git describe --tags)"
+    build-packages:
+      - build-essential
+      - libnvidia-compute-470-server
+      - nvidia-cuda-toolkit
+    stage-packages:
+      - mesa-utils
+      - mesa-utils-extra
+    override-build: |
+      make -C Samples/bandwidthTest CUDA_PATH=/usr/lib/nvidia-cuda-toolkit
+      make -C Samples/deviceQuery CUDA_PATH=/usr/lib/nvidia-cuda-toolkit
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/bin/
+      cp bin/x86_64/linux/release/* $SNAPCRAFT_PART_INSTALL/usr/bin/
+    stage:
+      - usr/bin/bandwidthTest
+      - usr/bin/deviceQuery
+      - usr/bin/glxinfo
+      - usr/bin/eglinfo
+      - usr/bin/es2_info
+
+  cleanup:
+    after: [samples]
+    plugin: nil
+    build-snaps: [ nvidia-core20/edge ]
+    override-prime: |
+      set -eux
+      cd /snap/nvidia-core20/current/egl/lib
+      find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
+      rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
+      for CRUFT in bug drirc.d glvnd libdrm lintian man; do
+        rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
+      done
