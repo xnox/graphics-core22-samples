@@ -1,10 +1,10 @@
-name: graphics-core20-samples
+name: graphics-core22-samples
 adopt-info: samples
-grade: stable
-summary: sample apps to check and test graphics-core20
-description: sample apps to check and test graphics-core20 plug
+grade: devel
+summary: sample apps to check and test graphics-core22
+description: sample apps to check and test graphics-core22 plug
 confinement: strict
-base: core20
+base: core22
 
 architectures:
   - build-on: amd64
@@ -18,18 +18,18 @@ environment:
   XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
 
 layout:
-  /usr/share/libdrm:  # Needed by mesa-core20 on AMD GPUs
+  /usr/share/libdrm:  # Needed by mesa-core22 on AMD GPUs
     bind: $SNAP/graphics/libdrm
-  /usr/share/drirc.d:  # Used by mesa-core20 for app specific workarounds
+  /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
     bind: $SNAP/graphics/drirc.d
 
 plugs:
   wayland:
   opengl:
-  graphics-core20:
+  graphics-core22:
     interface: content
     target: $SNAP/graphics
-    default-provider: nvidia-core20/edge
+    default-provider: nvidia-core22/edge
 
 apps:
   bandwidthTest:
@@ -79,10 +79,10 @@ parts:
   cleanup:
     after: [samples]
     plugin: nil
-    build-snaps: [ nvidia-core20/edge ]
+    build-snaps: [ nvidia-core22/edge ]
     override-prime: |
       set -eux
-      cd /snap/nvidia-core20/current/egl/lib
+      cd /snap/nvidia-core22/current/egl/lib
       find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
       rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
       for CRUFT in bug drirc.d glvnd libdrm lintian man; do
