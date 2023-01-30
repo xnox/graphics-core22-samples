@@ -59,7 +59,7 @@ parts:
       snapcraftctl set-version "$(git describe --tags)"
     build-packages:
       - build-essential
-      - libnvidia-compute-470-server
+      - libnvidia-compute-515-server
       - nvidia-cuda-toolkit
     stage-packages:
       - mesa-utils
