@@ -50,7 +50,7 @@ apps:
 parts:
   samples:
     source: https://github.com/NVIDIA/cuda-samples
-    source-tag: v10.1
+    source-tag: v11.5
     source-type: git
     source-depth: 1
     plugin: nil
