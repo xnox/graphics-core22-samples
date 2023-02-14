@@ -11,6 +11,8 @@ package-repositories:
     suites: [jammy-proposed]
     key-id: F6ECB3762474EDA9D21B7022871920D1991BC93C
     url: http://archive.ubuntu.com/ubuntu
+  - type: apt
+    ppa: xnox/nvidia-cuda-toolkit-fork
 
 architectures:
   - build-on: amd64
