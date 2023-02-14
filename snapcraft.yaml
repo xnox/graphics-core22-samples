@@ -80,9 +80,9 @@ parts:
     stage:
       - usr/bin/bandwidthTest
       - usr/bin/deviceQuery
-      - usr/bin/glxinfo
-      - usr/bin/eglinfo
-      - usr/bin/es2_info
+      - usr/bin/glxinfo*
+      - usr/bin/eglinfo*
+      - usr/bin/es2_info*
 
   cleanup:
     after: [samples]
