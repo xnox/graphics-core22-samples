@@ -1,6 +1,6 @@
 name: graphics-core22-samples
 adopt-info: samples
-grade: devel
+grade: stable
 summary: sample apps to check and test graphics-core22
 description: sample apps to check and test graphics-core22 plug
 confinement: strict
