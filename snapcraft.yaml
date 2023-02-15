@@ -34,6 +34,9 @@ layout:
 plugs:
   wayland:
   opengl:
+  network-bind:
+  kernel-module-observe:
+  hardware-observe:
   graphics-core22:
     interface: content
     target: $SNAP/graphics
