@@ -18,10 +18,6 @@ architectures:
   - build-on: amd64
 
 environment:
-  LD_LIBRARY_PATH:    $SNAP/graphics/lib
-  LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
-  LIBVA_DRIVERS_PATH: $SNAP/graphics/dri
-  __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
   XDG_CACHE_HOME:  $SNAP_USER_COMMON/.cache
   XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
 
@@ -30,6 +26,10 @@ layout:
     bind: $SNAP/graphics/libdrm
   /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
     bind: $SNAP/graphics/drirc.d
+  /usr/share/X11/XErrorDB:
+    bind: $SNAP/graphics/X11/XErrorDB
+  /usr/share/X11/locale:
+    bind: $SNAP/graphics/X11/locale
 
 plugs:
   wayland:
@@ -44,18 +44,23 @@ plugs:
 
 apps:
   bandwidthTest:
+    command-chain: [bin/graphics-core22-wrapper]
     command: usr/bin/bandwidthTest
 
   deviceQuery:
+    command-chain: [bin/graphics-core22-wrapper]
     command: usr/bin/deviceQuery
 
   glxinfo:
+    command-chain: [bin/graphics-core22-wrapper]
     command: usr/bin/glxinfo
 
   eglinfo:
+    command-chain: [bin/graphics-core22-wrapper]
     command: usr/bin/eglinfo
 
   es2info:
+    command-chain: [bin/graphics-core22-wrapper]
     command: usr/bin/es2_info
 
 parts:
@@ -87,15 +92,19 @@ parts:
       - usr/bin/eglinfo*
       - usr/bin/es2_info*
 
-  cleanup:
-    after: [samples]
-    plugin: nil
-    build-snaps: [ nvidia-core22/edge ]
+  graphics-core22:
+    after:
+      - drm-info
+      - eglinfo
+      - glmark2
+      - vainfo
+      - vdpauinfo
+      - vulkan-tools
+    source: https://github.com/MirServer/graphics-core22.git
+    plugin: dump
     override-prime: |
-      set -eux
-      cd /snap/nvidia-core22/current/egl/lib
-      find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
-      rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
-      for CRUFT in bug drirc.d glvnd libdrm lintian man; do
-        rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
-      done
+      craftctl default
+      ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22 nvidia-core22
+      rm -rf ${CRAFT_PRIME}/usr/share/{doc,man}
+    prime:
+      - bin/graphics-core22-wrapper
