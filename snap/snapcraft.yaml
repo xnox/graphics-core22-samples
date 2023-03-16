@@ -94,12 +94,7 @@ parts:
 
   graphics-core22:
     after:
-      - drm-info
-      - eglinfo
-      - glmark2
-      - vainfo
-      - vdpauinfo
-      - vulkan-tools
+      - samples
     source: https://github.com/MirServer/graphics-core22.git
     plugin: dump
     override-prime: |
