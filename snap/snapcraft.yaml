@@ -22,8 +22,6 @@ environment:
   XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
 
 layout:
-  /usr/share/libdrm:  # Needed by mesa-core22 on AMD GPUs
-    bind: $SNAP/graphics/libdrm
   /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
     bind: $SNAP/graphics/drirc.d
   /usr/share/X11/XErrorDB:
