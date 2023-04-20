@@ -15,11 +15,11 @@ environment:
 
 layout:
   /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
-    bind: $SNAP/graphics/drirc.d
+    symlink: $SNAP/graphics/drirc.d
   /usr/share/X11/XErrorDB:
-    bind: $SNAP/graphics/usr/share/X11/XErrorDB
+    symlink: $SNAP/graphics/X11/XErrorDB
   /usr/share/X11/locale:
-    bind: $SNAP/graphics/usr/share/X11/locale
+    symlink: $SNAP/graphics/X11/locale
 
 plugs:
   wayland:
